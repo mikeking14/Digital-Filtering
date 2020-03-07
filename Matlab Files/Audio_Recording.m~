@@ -3,11 +3,34 @@
 
 clc; close all; clear all
 
-%% Data Processing
+%%
+Fs = 44100 ; 
+nBits = 16 ; 
+
+nChannels = 1 ; 
+
+% Audio Device setup
+info = audiodevinfo; %
+deviceReader = audioDeviceReader; % read the devices
+devices = getAudioDevices(deviceReader) % put the audio devices in an object called devices
+ID = 3; % Sets which device -1 is default audio input device
+
+recObj = audiorecorder(Fs,nBits,nChannels,ID);
+disp('Start speaking.')
+pause(2);
+recordblocking(recObj,5);
+disp('End of Recording.');
+play(recObj);
+y = getaudiodata(recObj);
+
+% Write the recording to a file
+filename = 'tuning_forker.wav';
+audiowrite(filename,y,Fs);
+
+%%
 Fs = 44100 ; 
 f = Fs*(0:(L/2))/L;
 L = 5;
-
 % Impulse Response
 n = [0:1:50]
 h = (2/5)*sinc((2/5).*n)
@@ -19,13 +42,14 @@ fourier_Transform = (fftshift(abs(fourierTransform)));
 fourier_Transform_DB = mag2db(fourier_Transform);
 
 ImpulseResponse = conv(y,h);
-
-%% Graphs and stuff
+% Graphs and stuff
 figure
+hold on
 plot(y)
 plot(h)
 plot(ImpulseResponse);
 title('Time Domain Audio Plot')
+hold off
 
 figure
 plot(fftshift(abs(fft(h))))
@@ -36,4 +60,3 @@ hold on
 plot(f,fourier_Transform_DB,'r')
 plot(f, fourier_Transform,'b');
 title('Frequency Domain Audio Plot')
-legend('Db','Regular')
