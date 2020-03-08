@@ -5,26 +5,31 @@ clc; close all; clear all
 
 %% Data Processing
 Fs = 44100 ; 
-f = Fs*(0:(L/2))/L;
+% ----------------- V Do we need this? v-----------------
 L = 5;
+f = Fs*(0:(L/2))/L;
+% ----------------- ^ Do we need this? ^ -----------------
+
+[y,Fs] = audioread('tuning_fork.wav');
 
 % Impulse Response
-n = [0:1:50]
-h = (2/5)*sinc((2/5).*n)
+n = [0:1:50];
+h = (2/5)*sinc((2/5).*n);
 
 % Fourier Stuff
 f=linspace(-Fs/2,Fs/2,length(y)); 
 fourierTransform = fft((y));
 fourier_Transform = (fftshift(abs(fourierTransform)));
-fourier_Transform_DB = mag2db(fourier_Transform);
 
+% Convolution between audio and impulse in time to multiply in frequency
 ImpulseResponse = conv(y,h);
 
-%% Graphs and stuff
+%% Graphing Stuff
+[max_value,index]= max(fourierTransform);
+
 figure
-plot(y)
 plot(h)
-plot(ImpulseResponse);
+%plot(ImpulseResponse);
 title('Time Domain Audio Plot')
 
 figure
@@ -33,7 +38,9 @@ title('H(n) in Frequency Domain')
 
 figure
 hold on
-plot(f,fourier_Transform_DB,'r')
 plot(f, fourier_Transform,'b');
+text(max_value,index,'Resonant Frequency');
+xlabel('Frequency (Hz)'); ylabel('Y(n)');
+xlim([-800 800]);
 title('Frequency Domain Audio Plot')
-legend('Db','Regular')
+
