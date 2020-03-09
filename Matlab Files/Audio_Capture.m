@@ -1,4 +1,8 @@
 %%
+% This file will record audio from the selected device, and store that audio
+% in the name of a the file specified below. 
+
+ID = -1; % Sets which device is used. -1 is default audio input device
 Fs = 44100 ; 
 nBits = 16 ; 
 nChannels = 1 ; 
@@ -14,9 +18,9 @@ else
     info = audiodevinfo; %
     deviceReader = audioDeviceReader; % read the devices
     devices = getAudioDevices(deviceReader) % put the audio devices in an object called devices
-    ID = -1; % Sets which device is used. -1 is default audio input device
+    
 
-    recObj = audiorecorder(Fs,nBits,nChannels,ID);
+    recObj = audiorecorder(Fs,nBits,nChannels,ID); % Create recording object
     disp('Start speaking.')
     pause(2);
     recordblocking(recObj,5);

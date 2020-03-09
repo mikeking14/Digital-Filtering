@@ -1,10 +1,12 @@
 %%Matlab Script to capture audio from computer and display time
 %%domain/frequency domain plots.
 
-clc; clear all; close all
+clc; clear all; clos 
 
 %% Data Processing
+
 [audio,Fs] = audioread('tuning_fork.wav');
+noisy_audio = noise + audio; % adding noise to the audio
 
 % Impulse Response
 n = [0:1:50];
@@ -20,6 +22,7 @@ fourierTransform = (fftshift(abs(fft(audio))));
 ImpulseResponse = conv(audio,h);
 
 %% Graphing Stuff
+close all;
 [max_value_audio,index]= max(audio);
 max_value = max(fourierTransform);
 
