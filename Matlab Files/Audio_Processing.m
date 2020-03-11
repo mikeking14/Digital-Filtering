@@ -4,7 +4,7 @@
 clc; clear all; close all
 
 %% Data Processing
-[audio,Fs] = audioread('tuning_fork.wav');
+[audio,Fs] = audioread('tuning_fork_comRoom.wav');
 
 % Impulse Response
 n = [0:1:50];
@@ -37,7 +37,7 @@ subplot(2,1,1)
 plot(f, fourierTransform,'b');
 text(414.9,85.6125,sprintf('Resonant Frequency: 414.9'))
 xlabel('Frequency (Hz)'); ylabel('Y(n)');
-xlim([-800 800]);
+%xlim([-800 800]);
 title('Frequency Domain Audio Plot')
 
 subplot(2,1,2)
@@ -47,13 +47,13 @@ xlabel('Time'); ylabel('Amplitude');
 title('Time Domain Audio Plot')
 
 %% Noisy Audio Plots
-subplot(2,1,2)
-plot(noisy_audio)
-title('Noisy Audio Time Domain')
+%subplot(2,1,2)
+%plot(noisy_audio)
+%title('Noisy Audio Time Domain')
 
-subplot(2,1,2)
-plot(noisy_audio)
-title('Noisy Audio Frequency Domain')
+%subplot(2,1,2)
+%plot(noisy_audio)
+%title('Noisy Audio Frequency Domain')
 
 
 

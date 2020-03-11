@@ -2,11 +2,12 @@
 % This file will record audio from the selected device, and store that audio
 % in the name of a the file specified below. 
 
-ID = -1; % Sets which device is used. -1 is default audio input device
+ID = 3; % Sets which device is used. -1 is default audio input device
+record_Time = 10;
 Fs = 44100 ; 
 nBits = 16 ; 
 nChannels = 1 ; 
-fileName = 'tuning_forker2.wav'
+fileName = 'tuning_fork_comRoom.wav'
 
 % Check if the File already exists, if not continue and write to file
 if exist(fileName, 'file')
@@ -21,9 +22,9 @@ else
     
 
     recObj = audiorecorder(Fs,nBits,nChannels,ID); % Create recording object
-    disp('Start speaking.')
     pause(2);
-    recordblocking(recObj,5);
+    disp('Start speaking.')
+    recordblocking(recObj,record_Time);
     disp('End of Recording.');
     play(recObj);
     y = getaudiodata(recObj);
