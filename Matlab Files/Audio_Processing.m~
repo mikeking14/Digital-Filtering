@@ -8,9 +8,7 @@ clc; clear all; close all; clearvars
 
 %Adding Random Numbers to audio
 rand_Numbers = randn([length(audio) 1]);
-rand_scale = max(audio)/max(rand_Numbers)
-rand_Audio = rand_scale * rand_Numbers + audio; %scale random numbers down
-
+rand_Audio = max(audio)/max(rand_Numbers)*rand_Numbers + audio; %scale random numbers down
 
 % Impulse Response
 n = [0:1:50];
