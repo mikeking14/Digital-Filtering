@@ -1,13 +1,14 @@
 %%
-% This file will record audio from the selected device, and store that audio
-% in the name of a the file specified below. 
+% This 
+
+function audioCapture(time, filename)
 
 ID = 3; % Sets which device is used. -1 is default audio input device
 record_Time = 10;
 Fs = 44100 ; 
 nBits = 16 ; 
 nChannels = 1 ; 
-fileName = 'tuning_fork_comRoom.wav'
+
 
 % Check if the File already exists, if not continue and write to file
 if exist(fileName, 'file')

@@ -1,38 +1,56 @@
 %% Matlab Script to Analyze audio from computer and display time domain/frequency domain plots.
-%% 2.2 Analyse Audio
 
-% Initialize Workspace
-    clc; clear all; close all; clearvars
+
+%% Initialize Workspace
+clc; clear all; close all; clearvars
+
+% Create Audio File
+    filename = 'tuning_fork1.wav';
+    %Uncomment if you havent recorded any audio yet.
+    audio = audioCapture(10,filename)
 
 % Read Audio file
-    [audio,Fs] = audioread('tuning_fork1.wav');
-
-% Data preparation
-
-    % Create x-axis for frequency plots.
-    f=linspace(-Fs/2,Fs/2,length(audio)); 
+    filename = 'tuning_fork1.wav';
+    audio = audioread(filename);
+    info = audioinfo(filename);
     
+% Variable Declaration    
+    M = 30; % Filter Order
+    Fc = 300; % Low-pass filter cut off frequency
+    alpha = calculateAlpha(delta); % Calculate Kaiser Window shape parameter. (make sure to calculate)
+    
+    N = info.TotalSamples; % Number of samples
+    Fs = info.SampleRate; % Sample Rate
+    
+    
+    
+% Data preparation
+    % Create x-axis for frequency plots.
+    frequency=linspace(-Fs/2,Fs/2,length(audio)); 
     % Take the DTFT of the audio files, absolute value, and shift for symmetry
     FT = (fftshift(abs(fft(audio))));
     % Convert to decibles
     FT_db = mag2db(FT);
     
+    % Create a band pass filter using 2 Kaiser Window low pass filters
+    kaiser_H = kaiserLPF(
+    
     
 % Graphing    
     % Find the max value of the 
     [max_value_FT, max_index_FT] = max(FT);
-    fundamental_freq = abs(f(max_index_FT));
+    fund_freq = abs(frequency(max_index_FT)); % Fundamental Frequency of Tuning Fork
     
     % Audio DTFT Magnitude Spectra plot
     figure
     subplot(2,1,1);
-    plot(f, FT,'b');
+    plot(frequency, FT,'b');
     xlabel('Frequency (Hz)'); ylabel('Y(n)');
     title('Audio DTFT Magnitude Spectra')
-    text(fundamental_freq ,max_value_FT, sprintf('%f Hz', fundamental_freq))
+    text(fund_freq ,max_value_FT, sprintf('%f Hz', fund_freq))
     subplot(2,1,2);
-    plot(f, FT_db,'b');
-    xlabel('Frequency (Hz)'); ylabel('Y(n)');
+    plot(frequency, FT_db,'b');
+    xlabel('Frequency (Hz)'); ylabel('Amplitude (dB)');
     title('Audio DTFT Magnitude Spectra in Decibels')
     
     % From the above plot, we can see that our frequency is calculated as
@@ -42,42 +60,35 @@
 
     
     
-    %% Noisy Tuning Fork (BONUS)
+ %% Noisy Tuning Fork (BONUS)
   
     %Adding Random Numbers to audio
-    noisy_numbers = randn([length(audio) 1]);
-    noisy_scale = max(audio)/max(noisy_numbers);
-    noisy_audio = noisy_scale * noisy_numbers + audio; %scale noisy numbers down                            
-     
+    noisy_Audio = audio + randn(N, 1);
+
     % Take the DTFT of the audio files, absolute value, and shift for symmetry
-    noisy_FT = (fftshift(abs(fft(noisy_audio))));
-    % Convert to decibles
-    noisy_FT_db = mag2db(noisy_FT);
+    noisy_FT = (fftshift(abs(fft(noisy_Audio))));
+    noisy_FT_db = mag2db(noisy_FT); % Convert to decibles
     
     % Find Fundamental Frequency
-    [max_value_noisy_FT, max_index_noisy_FT] = max(noisy_FT);
-    fun_noisy_freq = abs(f(max_index_noisy_FT));     
+    [max_Value_Noisy_FT, max_Index_Noisy_FT] = max(noisy_FT);
+    fund_Noisy_Freq = abs(frequency(max_Index_Noisy_FT));     
 
    % Impulse Response
-    n = [0:1:50]
-    h = (2/5)*sinc((2/5).*n)
+    n = [0:1:50];
+    h = (2/5)*sinc((2/5).*n);
+    ImpulseResponse = conv(audio,h);
     
     
-    noisy_Filtered_FT = (fftshift(abs(fft(filtered_audio))));
     figure
     subplot(3,1,1)
-    plot(f,noisy_FT)
-    title('Noisy FT')
+    plot(ImpulseResponse)
+    title('IR')
     subplot(3,1,2)
-    plot(f, noisy_Filtered_FT);
-    title('Noisy Filtered FT')
-    
+    plot(h);
+    title('H')
+   
     % Listen to the filtered tone.
-    audiowrite('Noisy_Audio.wav',noisy_audio,Fs)
-    audiowrite('Filtered_Noisy_Audio.wav',filtered_audio,Fs)
-    
-
-
+     audiowrite('Noisy_Audio.wav',noisy_Audio,Fs)
 
 
 
