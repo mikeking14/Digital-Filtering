@@ -3,8 +3,8 @@
  function [alpha,A] = calculateAlpha(delta)
 
     % 1. Delta Already Minimum
-    % 2. Find A in decibles
-    A = -20*log10(delta);
+    % 2. Find A (attenuation) in decibles
+    A = 20*log10(delta);
     
     % 3. Calculate alpha
     if A>50
