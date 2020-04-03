@@ -14,21 +14,16 @@
 
     % Variable Declaration    
         % Variables to change shape of Kaiser Window
-        delta_F_H = 0.5;
-        delta_F_L = 0.5;
+        delta = 10; % Minimum(delta_Pass,delta_Stop)
+        delta_F = 100; % Inversely proportional to filter order
         Fc_H = 500; % Low-pass filter cut off frequency
         Fc_L = 400; % Low-pass filter cut off frequency
-        % Calculated deltas from cut off frequency and transition width
-        delta_PassH = Fc_H - (1/2 * delta_F_H); 
-        delta_StopH = Fc_H + (1/2 * delta_F_H);
-        delta_PassL = Fc_L - (1/2 * delta_F_L); 
-        delta_StopL = Fc_L + (1/2 * delta_F_L);
-        
+            
      % Variable Calculations
         N = info.TotalSamples; % Number of samples
         Fs = info.SampleRate; % Sample Rate
-        [alpha1, A1] = calculateAlpha(delta_PassH,delta_StopH); % Calculate Kaiser Window shape parameter. (make sure to calculate)
-        [alpha2, A2] = calculateAlpha(delta_PassL,delta_StopL); % Calculate Kaiser Window shape parameter. (make sure to calculate)
+        [alpha1, A1] = calculateAlpha(delta); % Calculate Kaiser Window shape parameter. (make sure to calculate)
+        [alpha2, A2] = calculateAlpha(delta); % Calculate Kaiser Window shape parameter. (make sure to calculate)
 
     % Data preparation
         % Create x-axis for frequency plots.
@@ -60,8 +55,7 @@
     % 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped
     % on the tuning fork. We can express this as a percentage: 0.4491/415.3
     % = 0.1081% away from the stamped frequency.
-    
-    
+       
     
  %% Noisy Tuning Fork (BONUS)
   
@@ -76,18 +70,8 @@
     fund_Noisy_Freq = abs(frequency(max_Index_Noisy_FT));     
     
     % Create a band pass filter using 2 Kaiser Window low pass filters
-    [kaiser_H,n1] = kaiserLPF(A1,alpha1,delta_PassH,delta_StopH, delta_F_H,Fc_H,Fs,N);
-    [kaiser_L,n2] = kaiserLPF(A2,alpha2,delta_PassL,delta_StopL,delta_F_L,Fc_L,Fs,N);
-    kaiser_H_FT = fftshift(abs(fft(kaiser_H)));
-    kaiser_L_FT = fftshift(abs(fft(kaiser_L)));
-
-    % Plot the Kaiser Window 
-    f = linspace(-Fs/2,Fs/2,N)';
-    figure
-    hold on
-    plot(f,(kaiser_H_FT))
-    plot(f,(kaiser_L_FT))
-    title('Kaiser Window Overlap')
+    [kaiser_H,n1] = kaiserLPF(alpha1,A1,delta_F,Fc_H,Fs,N);
+    [kaiser_L,n2] = kaiserLPF(alpha2,A2,delta_F,Fc_L,Fs,N);
    
     % Listen to the filtered tone.
     audiowrite('Noisy_Audio.wav',noisy_Audio,Fs)
