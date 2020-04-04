@@ -1,4 +1,11 @@
+% This function creates a Kaiser Low Pass Filter(LPF). It accepts alpha -
+% shape parameter of the window, Fs - sampling frequeny, Fc - LPF cut off
+% frequency, F_max - maximum frequeny within the FT signal, M -
+% filter order, and N - number of samples in the signal.
+
+
 function [kaiser_LPF,n] = kaiserLPF(alpha,Fs,Fc,F_max,M,N)
+
 %% Create the Low Pass Filter
     % Define Characteristics of the window        
         L = 2*M;
