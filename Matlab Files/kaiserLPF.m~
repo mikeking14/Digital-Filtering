@@ -1,10 +1,9 @@
-function [kaiser_LPF, kaiser_LPF_FT,n] = kaiserLPF(A,alpha,delta_F, Fc, Fs, N)
+function [kaiser_LPF,n] = kaiserLPF(alpha,Fs,Fc,M,N)
 %% Create the Low Pass Filter
     % Define Characteristics of the window        
-        %Length = filterOrder(A, Fs, delta_F);
-        %M = (Length-1)/2;
-        
-        n = linspace(0,,Z)';           % Create axis for time
+        L = 2*M;
+        Z = L + 1;
+        n = linspace(0,L,Z)';           % Create axis for time
         f = linspace(-Fs/2,Fs/2,N);     % Create axis for frequency
 
     % Truncate the ideal LPF, and shift it right by L to make it causal.
@@ -19,7 +18,9 @@ function [kaiser_LPF, kaiser_LPF_FT,n] = kaiserLPF(A,alpha,delta_F, Fc, Fs, N)
             
     % Discrete Fourier Transform of Kaiser window
         kaiser_LPF_FT = real(fftshift(fft(kaiser_LPF,N)));
-        
+    
+    % Shited Kaiser impulse response to create a Bandpass filter.
+        kaiser_BPF = 
      
     %% Plot the Kaiser Window
     figure

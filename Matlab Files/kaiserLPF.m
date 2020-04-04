@@ -1,10 +1,10 @@
-function [kaiser_LPF, kaiser_LPF_FT,n] = kaiserLPF(alpha,Fs,Fc,M,N)
+function [kaiser_LPF,n] = kaiserLPF(alpha,Fs,Fc,F_max,M,N)
 %% Create the Low Pass Filter
     % Define Characteristics of the window        
         L = 2*M;
         Z = L + 1;
         n = linspace(0,L,Z)';           % Create axis for time
-        f = linspace(-Fs/2,Fs/2,N);     % Create axis for frequency
+        f = linspace(-Fs/2,Fs/2,N)';     % Create axis for frequency
 
     % Truncate the ideal LPF, and shift it right by L to make it causal.
         LPF = ( (2*Fc)/Fs ) * sinc( ((2*Fc)/Fs)*(n-M) );
@@ -15,11 +15,7 @@ function [kaiser_LPF, kaiser_LPF_FT,n] = kaiserLPF(alpha,Fs,Fc,M,N)
 
     % Finite Causal IR by multiplying hd_LPF with kaiser_Window.
         kaiser_LPF = LPF .* kaiser_Window;
-            
-    % Discrete Fourier Transform of Kaiser window
-        kaiser_LPF_FT = real(fftshift(fft(kaiser_LPF,N)));
-        
-     
+    
     %% Plot the Kaiser Window
     figure
     subplot(2,1,1)
@@ -27,7 +23,7 @@ function [kaiser_LPF, kaiser_LPF_FT,n] = kaiserLPF(alpha,Fs,Fc,M,N)
     title('Kaiser Window in Time Dommain')
     xlabel('n'); ylabel('Amplitude)')
     subplot(2,1,2)
-    plot(f,mag2db(kaiser_LPF_FT))
+    plot(f,mag2db(real(fftshift(fft(kaiser_LPF,N)))))
     title(sprintf('Single Kaiser Windowed LPF: alpha: %f : Fc: %f', alpha, Fc))
     xlabel('n'); ylabel('Amplitude (db)');
     
