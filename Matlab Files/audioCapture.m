@@ -1,7 +1,7 @@
 %%
 % This 
 
-function audioCapture(time, filename)
+function audioCapture(time, filename, ID)
 
 ID = 3; % Sets which device is used. -1 is default audio input device
 record_Time = 10;
