@@ -39,9 +39,9 @@
 %             [alphaH, AH] = calculateAlpha(delH); % Calculate Kaiser Window shape parameter.
 %             [alphaL, AL] = calculateAlpha(delL); % Calculate Kaiser Window shape parameter.   
             %%
-        M = 50; % Filter Order
+        M = 2000; % Filter Order
         alphaH = 7;
-        alphaL = 0.5;
+        alphaL = 3;
         Fc = 15; % Cut-off frequency for LPF
         
      % Variable Calculations
@@ -62,17 +62,17 @@
     [max_value_FT, max_index_FT] = max(audio_FT);
     fund_freq = abs(frequency(max_index_FT)); % Fundamental Frequency of Tuning Fork
   
-    %% Audio DTFT Magnitude Spectra plot
-%     figure
-%     subplot(2,1,1);
-%     plot(frequency, FT,'b');
-%     xlabel('Frequency (Hz)'); ylabel('Y(n)');
-%     title('Audio DTFT Magnitude Spectra')
-%     text(fund_freq ,max_value_FT, sprintf('%f Hz', fund_freq))
-%     subplot(2,1,2);
-%     plot(frequency, FT_db,'b');
-%     xlabel('Frequency (Hz)'); ylabel('Amplitude (dB)');
-%     title('Audio DTFT Magnitude Spectra in Decibels');
+    % Audio DTFT Magnitude Spectra plot
+    figure
+    subplot(2,1,1);
+    plot(frequency, FT,'b');
+    xlabel('Frequency (Hz)'); ylabel('Y(n)');
+    title('Audio DTFT Magnitude Spectra')
+    text(fund_freq ,max_value_FT, sprintf('%f Hz', fund_freq))
+    subplot(2,1,2);
+    plot(frequency, FT_db,'b');
+    xlabel('Frequency (Hz)'); ylabel('Amplitude (dB)');
+    title('Audio DTFT Magnitude Spectra in Decibels');
     
     % From the above plot, we can see that our frequency is calculated as
     % 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped
@@ -82,15 +82,15 @@
  %% Noisy Tuning Fork (BONUS)
   
     %Adding Random Numbers to audio
-    noisy_audio = audio + randn(N, 1);
-
+    noisy_audio = audio + randn(N,1) * max(audio);
+    
     % Take the DTFT of the audio files, absolute value, and shift for symmetry
     noisy_audio_FT = (fftshift(abs(fft(noisy_audio))));
     
     % Find Fundamental Frequency
-    [max_Value_Noisy_FT, max_Index_Noisy_FT] = max(noisy_audio_FT);
-    F_max = abs(frequency(max_Index_Noisy_FT));  
-    
+    [max_value_noisy_FT, max_index_noisy_FT] = max(noisy_audio_FT);
+    F_max = abs(frequency(max_index_noisy_FT)); % Fundamental Frequency of Tuning Fork
+
     % Create a BPF using 2 Kaiser Window low pass filters
     [kaiser_LPF1, n1] = kaiserLPF(alphaH,Fs,Fc,F_max,M,N);
     [kaiser_LPF2, n2] = kaiserLPF(alphaL,Fs,Fc,F_max,M,N);
@@ -104,43 +104,43 @@
     kaiser_BPF2_FT = abs(fftshift(fft(kaiser_BPF2,N)));
     
     % All windows within kaiser_array will be applied to the audio signal
-    kaiser_array = [kaiser_BPF1 ,kaiser_BPF2];
+    kaiser_array = [kaiser_BPF1,kaiser_BPF2];
     % Pass kaiser array to my filter function
-    clean_audio = myFilter(kaiser_array, noisy_audio_FT);
+    filtered_audio = myFilter(kaiser_array, noisy_audio);
     % DFT of Clean Audio
-    clean_audio_FT = abs(fftshift(fft(clean_audio)));
+    filtered_audio_FT = fftshift(abs(fft(filtered_audio)));
     
-   %% Plots     
-        % Overlaped Kaiser Windows
+   %% Plots: Overlaped Kaiser Windowed BPF's
+        % Time Domain
         figure
         hold on
         plot(n1, real(kaiser_BPF1),'b')
         plot(n2, real(kaiser_BPF2),'r')
         title('Overlapped Kaiser Windows in Time Domain')
-        xlabel('n'); ylabel('h(n)')
+        xlabel('n'); ylabel('h(n)'), legend
         hold off
-        
+        % Frequency Domain
         figure
         hold on 
         plot(frequency, mag2db(kaiser_BPF1_FT), 'b')
         plot(frequency, mag2db(kaiser_BPF2_FT), 'r')
         title('Overlapped Kaiser BPF Windows')
-        xlabel('f'); ylabel('H(f) (db)')
+        xlabel('f'); ylabel('H(f) (db)'), legend
         hold off
         
-        % Clean Audio
+        %% Plots: Audio vs Filtered Audio
         figure
         hold on
-        plot(frequency, audio_FT,'b')
-        plot(frequency, clean_audio_FT,'r')
+        plot(frequency, mag2db(audio_FT),'b')
+        plot(frequency, mag2db(filtered_audio_FT),'r')
         title('Audio and Filtered/Cleaned Audio')
-        xlabel('n'); ylabel('h(n)')
+        xlabel('n'); ylabel('H(f) (db)'), legend('Audio', 'Filtered Audio')
         hold off
     
     %% Listen to the filtered tone.
     
     audiowrite('Noisy_Audio.wav',noisy_audio,Fs)
-    audiowrite('Clean_Noisy_Audio.wav',clean_audio,Fs)
+    audiowrite('Clean_Noisy_Audio.wav',filtered_audio,Fs)
     
     
 
