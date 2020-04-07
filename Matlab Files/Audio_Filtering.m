@@ -16,10 +16,10 @@
             filename = 'Audio Files/tuning_fork.wav';
 
         % Create Audio File
-            % Uncomment if you havent recorded any audio yet.
+            % Uncomment 'filename' if you need to record audio.
             ID = -1; % Set the device (-1 is default audio device)
             time = 3; % Sets the length of time the audioCapture will run.
-            %audioCapture(time,filename,ID);    
+            %filename = audioCapture(time,filename,ID);
 
         % Read Audio file
             audio = audioread(filename);
@@ -29,7 +29,7 @@
             M = 2000; % Filter Order
             alphaH = 7; % Alpha shape parameter of Kaiser window
             alphaL = 0.5; % Alpha shape parameter of Kaiser window
-            Fc = 100; % Cut-off frequency for LPF
+            Fc = 10; % Cut-off frequency for LPF
 
          % Variable Calculations
             N = info.TotalSamples; % Number of samples
@@ -40,8 +40,8 @@
         % Data preparation
             % Create x-axis for frequency plots.
                 frequency=linspace(-Fs/2,Fs/2,N)'; 
-            % Take the DTFT of the audio files, absolute value, and shift for symmetry
-                audio_FT = (fftshift(abs(fft(audio))));
+            % Take the DFT of the audio files, absolute value, and shift for symmetry
+                audio_FT = (fftshift(abs(fft(audio/max(audio)))))/N;
             % Convert to decibles
                 audio_FT_db = mag2db(audio_FT);    
 
@@ -49,22 +49,21 @@
             [max_value_FT, max_index_FT] = max(audio_FT);
             fund_freq = abs(frequency(max_index_FT)); % Fundamental Frequency of Tuning Fork
 
-        % Audio DTFT Magnitude Spectra plot
+        % Audio DFT Magnitude Spectra plot
             % Time domain plot
                 figure
-                subplot(3,1,2);
+                subplot(3,1,1);
                 plot(frequency, audio_FT,'b');
                 xlabel('Frequency (Hz)'); ylabel('Y(n)');
                 title('Audio DFT Magnitude Spectra')
             % Frequency Domain Plot
-                figure
                 subplot(3,1,2);
                 plot(frequency, audio_FT,'b');
                 xlabel('Frequency (Hz)'); ylabel('Y(n)');
                 title('Audio DFT Magnitude Spectra')
                 text(fund_freq ,max_value_FT, sprintf('%f Hz', fund_freq))
             % Frequency Domain plot in dB
-                subplot(2,1,3);
+                subplot(3,1,3);
                 plot(frequency, audio_FT_db,'b');
                 xlabel('Frequency (Hz)'); ylabel('Amplitude (dB)');
                 title('Audio DFT Magnitude Spectra');
@@ -73,21 +72,20 @@
             % 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped
             % on the tuning fork. We can express this as a percentage: 0.4491/415.3
             % = 0.1081% away from the stamped frequency.
-
-                
-        %% Noisy Tuning Fork (BONUS)
+          
+    %% Noisy Tuning Fork (BONUS)
 
             %Adding Random Numbers to audio
-                noisy_audio = audio + randn(N,1) * max(audio);
+                noisy_audio = audio / max(audio) + randn(N,1);
 
             % Take the DTFT of the audio files, absolute value, and shift for symmetry
-                noisy_audio_FT = (fftshift(abs(fft(noisy_audio))));
+                noisy_audio_FT = (fftshift(abs(fft(noisy_audio))))/N;
 
             % Find Fundamental Frequency 
                 [max_value_noisy_FT, max_index_noisy_FT] = max(noisy_audio_FT);
                 F_max = abs(frequency(max_index_noisy_FT)); % Fundamental Frequency of Tuning Fork
 
-            % Create a BPF using 2 Kaiser Window low pass filters
+            % Create BPF with Kaiser Window LPF by multipying by e in time domain.
                 [kaiser_LPF1, n1] = kaiserLPF(alphaH,Fs,Fc,F_max,M,N);
                 [kaiser_LPF2, n2] = kaiserLPF(alphaL,Fs,Fc,F_max,M,N);
 
@@ -105,8 +103,7 @@
                 filtered_audio = myFilter(kaiser_array, noisy_audio);
             % DFT of Clean Audio
                 filtered_audio_FT = fftshift(abs(fft(filtered_audio)));
-    
-                
+                   
     %% Final plots    
         % Overlaped Kaiser Windowed BPF's
             % Time Domain
@@ -129,27 +126,28 @@
         % Audio vs Filtered Audio
                 figure
                 hold on
+                subplot(2,1,1)
                 plot(frequency, mag2db(audio_FT),'b')
+                subplot(2,1,2)
                 plot(frequency, mag2db(filtered_audio_FT),'r')
                 title('Audio and Filtered/Cleaned Audio')
-                xlabel('n'); ylabel('H(f) (db)'), legend('Audio', 'Filtered Audio')
-                hold off
-    
+                xlabel('n'); ylabel('H(f) (db)')
+                hold off    
                 
     %% Audio Out files.
-        
+        time = N/Fs;
         disp('Playing: Audio')
-        soundsc(audio, Fs);
-        pause(11);
+        % Uncomment if you would like to hear the audio
+        soundsc(audio, Fs); 
+        pause(time);
    
         audiowrite('Audio Files/Noisy_Audio.wav',noisy_audio,Fs)
         disp('Playing: noisy_audio')
+        % Uncomment if you would like to hear the audio
         soundsc(noisy_audio, Fs);
-        pause(11);
+        pause(time);
        
         audiowrite('Audio Files/Filtered_Audio.wav',filtered_audio,Fs)
-        disp('Playing: filtered_audio)')
+        disp('Playing: filtered_audio')
+        % Uncomment if you would like to hear the audio
         soundsc(filtered_audio, Fs);
-
-    
-
