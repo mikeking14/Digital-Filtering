@@ -2,22 +2,22 @@
 
     %% Initialize Workspace
         clc; clear; close all; clearvars
+            filename = 'Audio Files/testing1m.wav';
 
         % Create Audio File
             % Uncomment if you havent recorded any audio yet.
-            % ID = -1; % Set the device (-1 is default audio device)
-            % audio = audioCapture(10,filename,ID);    
+            ID = -1; % Set the device (-1 is default audio device)
+             audioCapture(10,filename,ID);    
 
         % Read Audio file
-            filename = 'Audio Files/tuning_fork_comRoom.wav';
             audio = audioread(filename);
             info = audioinfo(filename);  
 
         % Variable Declaration
             M = 2000; % Filter Order
-            alphaH = 7;
-            alphaL = 0.5;
-            Fc = 10; % Cut-off frequency for LPF
+            alphaH = 7; % Alpha shape parameter of Kaiser window
+            alphaL = 0.5; % Alpha shape parameter of Kaiser window
+            Fc = 100; % Cut-off frequency for LPF
 
          % Variable Calculations
             N = info.TotalSamples; % Number of samples
@@ -63,7 +63,7 @@
             % Take the DTFT of the audio files, absolute value, and shift for symmetry
                 noisy_audio_FT = (fftshift(abs(fft(noisy_audio))));
 
-            % Find Fundamental Frequency
+            % Find Fundamental Frequency 
                 [max_value_noisy_FT, max_index_noisy_FT] = max(noisy_audio_FT);
                 F_max = abs(frequency(max_index_noisy_FT)); % Fundamental Frequency of Tuning Fork
 
@@ -118,7 +118,7 @@
                 
     %% Audio Out files.
         
-        disp('Playing: audio')
+        disp('Playing: Audio')
         soundsc(audio, Fs);
         pause(11);
    
@@ -127,7 +127,7 @@
         soundsc(noisy_audio, Fs);
         pause(11);
        
-        audiowrite('Audio Files/Clean_Noisy_Audio.wav',filtered_audio,Fs)
+        audiowrite('Audio Files/Filtered_Audio.wav',filtered_audio,Fs)
         disp('Playing: filtered_audio)')
         soundsc(filtered_audio, Fs);
 

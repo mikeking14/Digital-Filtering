@@ -14,16 +14,16 @@ recObj = audiorecorder(Fs,nBits,nChannels,ID); % Create recording object
     % Check if the File already exists, if not continue and write to file
     while exist(filename, 'file')
       % File already exists.
-      warningMessage = sprintf('Warning: file already exists:\n%s', filename);
+      warningMessage = sprintf('Warning: file already exists:\n%s', fileName);
       uiwait(msgbox(warningMessage));
-      filename = input('Enter a new file name: ','s');
-      filename = append('Audio Files/',filename,'.wav')
+      filename = input('Enter a new file name');
+      filename = sprintf('Audio Files/%f',filename)
     end
     
     
     % Audio Device setup
-    %info = audiodevinfo; 
-    %$deviceReader = audioDeviceReader; % read the devices
+    info = audiodevinfo; %
+    deviceReader = audioDeviceReader; % read the devices
     %devices = getAudioDevices(deviceReader); % put the audio devices in an object called devices
     
 
