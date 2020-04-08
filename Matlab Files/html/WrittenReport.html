@@ -1,0 +1,345 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>WrittenReport</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-04-07"><meta name="DC.source" content="WrittenReport.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Intro</a></li><li><a href="#2">Section 1</a></li><li><a href="#3">A)</a></li><li><a href="#4">B)</a></li><li><a href="#5">C)</a></li><li><a href="#6">Section 2</a></li><li><a href="#7">Section 3</a></li><li><a href="#8">Section 4</a></li><li><a href="#9">Section 5</a></li><li><a href="#10">Section 6</a></li><li><a href="#11">Section 7</a></li><li><a href="#12">Appendix: The actual code can be seen below.</a></li></ul></div><h2 id="1">Intro</h2><p>Due to the length of the code and multiple function being used, I have created a second script to generate the written report. The actual code will be at the end of this document in the appendix.</p><pre class="codeinput"><span class="comment">% Written Report</span>
+close <span class="string">all</span>;
+</pre><h2 id="2">Section 1</h2><p>Find the max value of the tuning fork</p><pre class="codeinput">    [max_value_FT_db, max_index_FT_db] = max(audio_FT_db);
+    fund_freq = abs(frequency(max_index_FT_db)); <span class="comment">% Fundamental Frequency of Tuning Fork</span>
+</pre><h2 id="3">A)</h2><p>Frequency Domain plot in dB</p><pre class="codeinput">    plot(frequency, audio_FT_db,<span class="string">'b'</span>);
+    xlabel(<span class="string">'Frequency (Hz)'</span>); ylabel(<span class="string">'Amplitude (dB)'</span>);
+    title(<span class="string">'Audio Magnitude Spectra'</span>);
+    text(fund_freq , max_value_FT_db, sprintf(<span class="string">'%f Hz'</span>, fund_freq))
+</pre><img vspace="5" hspace="5" src="WrittenReport_01.png" alt=""> <h2 id="4">B)</h2><p>From the above plot, we can see that our frequency is calculated as 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped on the tuning fork. We can express this as a percentage: 0.4491/415.3 = 0.1081% away from the stamped frequency.</p><h2 id="5">C)</h2><p>We can see that the magnitude spectrum is symmetric about the 'y-axis'. This is because the magnitude spectrum will always have even symmetry.</p><h2 id="6">Section 2</h2><p>Document your filter design for improving the signal to noise ratio of the noisy tuning fork?</p><pre class="codeinput">        <span class="comment">% In order to increase the signal to noise ratio, I scaled the audio</span>
+        <span class="comment">% amplitude by dividing every point by the max audio value. This amplified the</span>
+        <span class="comment">% audio so that every point was between 0 and 1, the same as the random</span>
+        <span class="comment">% signal.</span>
+
+            <span class="comment">%Adding Random Numbers to audio</span>
+                noisy_audio = audio / max(audio) + randn(N,1);
+
+
+    <span class="comment">% State what window you used, the lowpass cutoff frequency Fc, and the</span>
+    <span class="comment">% centre frequeny of the bandpass filter Fo. Also give the frequenies in</span>
+    <span class="comment">% Hz?</span>
+
+        <span class="comment">% Window:</span>
+        <span class="comment">% I used the Kaiser window, due to its ability to ajust the shape</span>
+        <span class="comment">% parameter. Originally, I tried to set the ripple (delta_pass delta_stop)</span>
+        <span class="comment">% and attenuation (A) parameters, and use those to calculate the required</span>
+        <span class="comment">% alpha filter order, and D parameter such that I could create the kaiser</span>
+        <span class="comment">% window to meet these requirements. I stopped doing this because I found</span>
+        <span class="comment">% better success in setting the alpha parameter and filter order directly.</span>
+
+
+        <span class="comment">% Lowpass cutoff frequency, Fc:</span>
+        <span class="comment">% I used 10 Hz as my cuttoff frequency. This was entirely due to trial</span>
+        <span class="comment">% and error. Listening to the signal, and tuning the cut off</span>
+        <span class="comment">% frequency.</span>
+
+
+        <span class="comment">% Center Frequency of the Bandpass filter, Fo:</span>
+        <span class="comment">% I set the center frequency of the Bandpass filter by multiplying the</span>
+        <span class="comment">% kaiser window by - exp(j*2*pi*(F_max/Fs)*n1)) - as seen below.</span>
+
+            kaiser_BPF1 = real(kaiser_LPF1.*exp(j*2*pi*(F_max/Fs)*n1));
+            kaiser_BPF2 = real(kaiser_LPF2.*exp(j*2*pi*(F_max/Fs)*n2));
+
+        <span class="comment">% I did this due to the Fourier Transform Frequency Shifting Property</span>
+        <span class="comment">% which states that multiplying a signal in the time domain by</span>
+        <span class="comment">% exp(j*W*t) will shift your signal to the right in the frequency domain</span>
+        <span class="comment">% by W. Another thing to note is that I multiply by F_max(fundamental</span>
+        <span class="comment">% frequency of the tuning fork), divided by Fs(samplerate). This is</span>
+        <span class="comment">% because my frequency axis is:</span>
+
+            frequency=linspace(-Fs/2,Fs/2,N)';
+
+
+        <span class="comment">% Also give the frequency in Hz:</span>
+        <span class="comment">% Fc = 10Hz</span>
+        <span class="comment">% Fo = 415Hz</span>
+</pre><h2 id="7">Section 3</h2><p>Show the magnitude spectrum of the bandpass filter used for filtering the noisy tuning fork spectrum. Adjust the x-axis scale so the passband, transition band and stop band are easily distinguished.</p><pre class="codeinput">        <span class="comment">% Frequency Domain</span>
+            figure
+            hold <span class="string">on</span>
+            plot(frequency, mag2db(kaiser_BPF1_FT), <span class="string">'b'</span>)
+            plot(frequency, mag2db(kaiser_BPF2_FT), <span class="string">'r'</span>)
+            title(<span class="string">'Overlapped Kaiser BPF Windows'</span>)
+            xlabel(<span class="string">'f'</span>); ylabel(<span class="string">'H(f) (db)'</span>), legend(<span class="string">'Bandpass Filter 1'</span>,<span class="string">'Bandpass Filter 2'</span>)
+            hold <span class="string">off</span>
+</pre><h2 id="8">Section 4</h2><pre class="codeinput">    <span class="comment">% Describe the method that you used to filter the noisy tuning fork</span>
+    <span class="comment">% signal. Did you implement a convolution, difference equation, or work</span>
+    <span class="comment">% in the frequency domain?</span>
+
+        <span class="comment">% In order to filter the noisy tuning fork, I created a function</span>
+        <span class="comment">% that accepts and array of filters, and applies each of these</span>
+        <span class="comment">% filters to the audio signal by sequentially multiplying both the</span>
+        <span class="comment">% filter and audio signal in the frequency domain. This can be seen</span>
+        <span class="comment">% in the 'myFilter' function.</span>
+</pre><h2 id="9">Section 5</h2><pre class="codeinput">    <span class="comment">% Generate two plots which show the unfiltered tuning fork magnitude</span>
+    <span class="comment">% spectrum and the filtered tuning fork spectrum. Show the y-axis in db</span>
+    <span class="comment">% and the x-axis in frequency(Hz or kHz).</span>
+
+        <span class="comment">% Audio vs Filtered Audio</span>
+            figure
+            subplot(2,1,1)
+            plot(frequency, mag2db(audio_FT),<span class="string">'b'</span>)
+            subplot(2,1,2)
+            plot(frequency, mag2db(filtered_audio_FT),<span class="string">'r'</span>)
+            title(<span class="string">'Audio and Filtered/Cleaned Audio'</span>)
+            xlabel(<span class="string">'n'</span>); ylabel(<span class="string">'H(f) (db)'</span>)
+</pre><h2 id="10">Section 6</h2><pre class="codeinput">        <span class="comment">%Power Spectrum attempt 1</span>
+        <span class="comment">% Power Spectrum</span>
+        PowerSpectrum1 = (1/N) * abs(myVoice).^2;
+        autoVoice1 = autocorr(myVoice,1000);
+        MyFrequency1 = Fs/max(autoVoice1);
+
+            subplot(2,1,1)
+            plot(PowerSpectrum1)
+            title(<span class="string">'Power Spectrum1 of my Voice'</span>)
+            subplot(2,1,2)
+            plot(autoVoice1)
+            title(<span class="string">'AutoCorrelation1 of my Voice'</span>)
+
+        <span class="comment">% Power Spectrum attempt 2</span>
+        PowerSpectrum2 = fftshift(fft(myVoice).*conj(fft(myVoice)));
+        autoVoice2 = ifft(PowerSpectrum2);
+        MyFrequency2 = Fs/max(autoVoice2);
+
+            subplot(2,1,1)
+            plot(PowerSpectrum2)
+            title(<span class="string">'Power Spectrum2 of my Voice'</span>)
+            subplot(2,1,2)
+            <span class="comment">%autoVoice = autocorr(myVoice,300);</span>
+            plot(autoVoice2)
+            title(<span class="string">'AutoCorrelation2 of my Voice'</span>)
+</pre><h2 id="11">Section 7</h2><pre class="codeinput"><span class="comment">%-------------------------------------------------------------------------</span>
+</pre><h2 id="12">Appendix: The actual code can be seen below.</h2><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Intro
+% Due to the length of the code and multiple function being used, I have 
+% created a second script to generate the written report. The actual code 
+% will be at the end of this document in the appendix.
+
+% Written Report
+close all;
+
+%% Section 1
+% Find the max value of the tuning fork
+    [max_value_FT_db, max_index_FT_db] = max(audio_FT_db);
+    fund_freq = abs(frequency(max_index_FT_db)); % Fundamental Frequency of Tuning Fork
+
+%% A)   
+% Frequency Domain plot in dB
+    plot(frequency, audio_FT_db,'b');
+    xlabel('Frequency (Hz)'); ylabel('Amplitude (dB)');
+    title('Audio Magnitude Spectra');
+    text(fund_freq , max_value_FT_db, sprintf('%f Hz', fund_freq))
+
+%% B)    
+% From the above plot, we can see that our frequency is calculated as
+% 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped
+% on the tuning fork. We can express this as a percentage: 0.4491/415.3
+% = 0.1081% away from the stamped frequency.
+
+%% C) 
+% We can see that the magnitude spectrum is symmetric about the 'y-axis'. 
+% This is because the magnitude spectrum will always have even symmetry.
+
+%% Section 2
+    % Document your filter design for improving the signal to noise ratio of
+    % the noisy tuning fork?
+
+        % In order to increase the signal to noise ratio, I scaled the audio
+        % amplitude by dividing every point by the max audio value. This amplified the
+        % audio so that every point was between 0 and 1, the same as the random
+        % signal.
+
+            %Adding Random Numbers to audio
+                noisy_audio = audio / max(audio) + randn(N,1);
+
+        
+    % State what window you used, the lowpass cutoff frequency Fc, and the
+    % centre frequeny of the bandpass filter Fo. Also give the frequenies in
+    % Hz?
+       
+        % Window:
+        % I used the Kaiser window, due to its ability to ajust the shape
+        % parameter. Originally, I tried to set the ripple (delta_pass delta_stop)
+        % and attenuation (A) parameters, and use those to calculate the required
+        % alpha filter order, and D parameter such that I could create the kaiser 
+        % window to meet these requirements. I stopped doing this because I found 
+        % better success in setting the alpha parameter and filter order directly.
+
+        
+        % Lowpass cutoff frequency, Fc:
+        % I used 10 Hz as my cuttoff frequency. This was entirely due to trial
+        % and error. Listening to the signal, and tuning the cut off
+        % frequency.
+
+        
+        % Center Frequency of the Bandpass filter, Fo:
+        % I set the center frequency of the Bandpass filter by multiplying the
+        % kaiser window by - exp(j*2*pi*(F_max/Fs)*n1)) - as seen below. 
+
+            kaiser_BPF1 = real(kaiser_LPF1.*exp(j*2*pi*(F_max/Fs)*n1));
+            kaiser_BPF2 = real(kaiser_LPF2.*exp(j*2*pi*(F_max/Fs)*n2));
+
+        % I did this due to the Fourier Transform Frequency Shifting Property 
+        % which states that multiplying a signal in the time domain by 
+        % exp(j*W*t) will shift your signal to the right in the frequency domain 
+        % by W. Another thing to note is that I multiply by F_max(fundamental 
+        % frequency of the tuning fork), divided by Fs(samplerate). This is 
+        % because my frequency axis is:
+
+            frequency=linspace(-Fs/2,Fs/2,N)'; 
+
+
+        % Also give the frequency in Hz:
+        % Fc = 10Hz
+        % Fo = 415Hz
+
+%% Section 3
+    % Show the magnitude spectrum of the bandpass filter used for filtering
+    % the noisy tuning fork spectrum. Adjust the x-axis scale so the
+    % passband, transition band and stop band are easily distinguished.
+       
+        % Frequency Domain
+            figure
+            hold on 
+            plot(frequency, mag2db(kaiser_BPF1_FT), 'b')
+            plot(frequency, mag2db(kaiser_BPF2_FT), 'r')
+            title('Overlapped Kaiser BPF Windows')
+            xlabel('f'); ylabel('H(f) (db)'), legend('Bandpass Filter 1','Bandpass Filter 2')
+            hold off
+            
+%% Section 4
+
+    % Describe the method that you used to filter the noisy tuning fork
+    % signal. Did you implement a convolution, difference equation, or work
+    % in the frequency domain?
+        
+        % In order to filter the noisy tuning fork, I created a function
+        % that accepts and array of filters, and applies each of these
+        % filters to the audio signal by sequentially multiplying both the 
+        % filter and audio signal in the frequency domain. This can be seen
+        % in the 'myFilter' function.
+        
+%% Section 5
+
+    % Generate two plots which show the unfiltered tuning fork magnitude
+    % spectrum and the filtered tuning fork spectrum. Show the y-axis in db
+    % and the x-axis in frequency(Hz or kHz).
+    
+        % Audio vs Filtered Audio
+            figure
+            subplot(2,1,1)
+            plot(frequency, mag2db(audio_FT),'b')
+            subplot(2,1,2)
+            plot(frequency, mag2db(filtered_audio_FT),'r')
+            title('Audio and Filtered/Cleaned Audio')
+            xlabel('n'); ylabel('H(f) (db)')
+           
+%% Section 6
+
+        %Power Spectrum attempt 1
+        % Power Spectrum
+        PowerSpectrum1 = (1/N) * abs(myVoice).^2;
+        autoVoice1 = autocorr(myVoice,1000);
+        MyFrequency1 = Fs/max(autoVoice1);
+
+            subplot(2,1,1)
+            plot(PowerSpectrum1)
+            title('Power Spectrum1 of my Voice')
+            subplot(2,1,2)
+            plot(autoVoice1)
+            title('AutoCorrelation1 of my Voice')
+        
+        % Power Spectrum attempt 2
+        PowerSpectrum2 = fftshift(fft(myVoice).*conj(fft(myVoice)));
+        autoVoice2 = ifft(PowerSpectrum2);
+        MyFrequency2 = Fs/max(autoVoice2);
+        
+            subplot(2,1,1)
+            plot(PowerSpectrum2)
+            title('Power Spectrum2 of my Voice')
+            subplot(2,1,2)
+            %autoVoice = autocorr(myVoice,300);
+            plot(autoVoice2)
+            title('AutoCorrelation2 of my Voice')
+        
+%% Section 7
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+%% Appendix: The actual code can be seen below.
+     
+
+    
+     
+    
+
+##### SOURCE END #####
+--></body></html>

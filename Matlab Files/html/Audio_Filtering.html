@@ -1,0 +1,397 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Audio_Filtering</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-04-07"><meta name="DC.source" content="Audio_Filtering.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Initialize Workspace</a></li><li><a href="#3">Analyze Audio</a></li><li><a href="#4">Noisy Tuning Fork (BONUS)</a></li><li><a href="#5">Final plots</a></li><li><a href="#6">Voice Pitch</a></li><li><a href="#7">Audio Out files.</a></li></ul></div><pre class="codeinput"><span class="comment">% This matlab script will capture a specified amount of audio (time) and</span>
+<span class="comment">% store that audio in a file within the Audio Files folder. If a file with</span>
+<span class="comment">% the specified filename already exists, it will prompt the user for</span>
+<span class="comment">% another filename. Next, this script will analyse the audio, plotting the</span>
+<span class="comment">% audio in the time and frequency domain. The script then adds</span>
+<span class="comment">% noise to the audio file, and filters that noise using two kaiser windowed</span>
+<span class="comment">% low pass filters. Two filters are used so that two Kaiser windows of</span>
+<span class="comment">% different shape can be applied to the filters, hence improving the</span>
+<span class="comment">% quality of the filter. Next, the two kaiser windows are plotted,</span>
+<span class="comment">% overlapped in the time and frequency domain, so that we may better</span>
+<span class="comment">% visualize them. Additionally, plots of regular audio, and filtered audio</span>
+<span class="comment">% are plotted together.</span>
+</pre><h2 id="2">Initialize Workspace</h2><pre class="codeinput">        clc; clear; close <span class="string">all</span>;
+            filename = <span class="string">'Audio Files/tuning_fork.wav'</span>;
+
+        <span class="comment">% Create Audio File</span>
+            <span class="comment">% Uncomment 'filename' if you need to record audio.</span>
+            ID = -1; <span class="comment">% Set the device (-1 is default audio device)</span>
+            time = 3; <span class="comment">% Sets the length of time the audioCapture will run.</span>
+            <span class="comment">%filename = audioCapture(time,filename,ID);</span>
+
+        <span class="comment">% Read Audio file</span>
+            audio = audioread(filename);
+            info = audioinfo(filename);
+
+        <span class="comment">% Variable Declaration</span>
+            M = 100; <span class="comment">% Filter Order</span>
+            alphaH = 7; <span class="comment">% Alpha shape parameter of Kaiser window</span>
+            alphaL = 0; <span class="comment">% Alpha shape parameter of Kaiser window</span>
+            Fc = 10; <span class="comment">% Cut-off frequency for LPF</span>
+
+         <span class="comment">% Variable Calculations</span>
+            N = info.TotalSamples; <span class="comment">% Number of samples</span>
+            Fs = info.SampleRate; <span class="comment">% Sample Rate</span>
+</pre><h2 id="3">Analyze Audio</h2><pre class="codeinput">        <span class="comment">% Data preparation</span>
+            <span class="comment">% Create x-axis for frequency plots.</span>
+                frequency=linspace(-Fs/2,Fs/2,N)';
+            <span class="comment">% Take the DFT of the audio files, absolute value, and shift for symmetry</span>
+                audio_FT = (fftshift(abs(fft(audio/max(audio)))))/N;
+            <span class="comment">% Convert to decibles</span>
+                audio_FT_db = mag2db(audio_FT);
+
+        <span class="comment">% Find the max value of the</span>
+            [max_value_FT, max_index_FT] = max(audio_FT);
+            fund_freq = abs(frequency(max_index_FT)); <span class="comment">% Fundamental Frequency of Tuning Fork</span>
+
+        <span class="comment">% Audio DFT Magnitude Spectra plot</span>
+            <span class="comment">% Time domain plot</span>
+                figure
+                subplot(3,1,1);
+                plot(frequency, audio_FT,<span class="string">'b'</span>);
+                xlabel(<span class="string">'Frequency (Hz)'</span>); ylabel(<span class="string">'Y(n)'</span>);
+                title(<span class="string">'Audio DFT Magnitude Spectra'</span>)
+            <span class="comment">% Frequency Domain Plot</span>
+                subplot(3,1,2);
+                plot(frequency, audio_FT,<span class="string">'b'</span>);
+                xlabel(<span class="string">'Frequency (Hz)'</span>); ylabel(<span class="string">'Y(n)'</span>);
+                title(<span class="string">'Audio DFT Magnitude Spectra'</span>)
+                text(fund_freq ,max_value_FT, sprintf(<span class="string">'%f Hz'</span>, fund_freq))
+            <span class="comment">% Frequency Domain plot in dB</span>
+                subplot(3,1,3);
+                plot(frequency, audio_FT_db,<span class="string">'b'</span>);
+                xlabel(<span class="string">'Frequency (Hz)'</span>); ylabel(<span class="string">'Amplitude (dB)'</span>);
+                title(<span class="string">'Audio DFT Magnitude Spectra'</span>);
+
+            <span class="comment">% From the above plot, we can see that our frequency is calculated as</span>
+            <span class="comment">% 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped</span>
+            <span class="comment">% on the tuning fork. We can express this as a percentage: 0.4491/415.3</span>
+            <span class="comment">% = 0.1081% away from the stamped frequency.</span>
+</pre><img vspace="5" hspace="5" src="Audio_Filtering_01.png" alt=""> <h2 id="4">Noisy Tuning Fork (BONUS)</h2><pre class="codeinput">            <span class="comment">%Adding Random Numbers to audio</span>
+                noisy_audio = audio / max(audio) + randn(N,1);
+
+            <span class="comment">% Take the DTFT of the audio files, absolute value, and shift for symmetry</span>
+                noisy_audio_FT = (fftshift(abs(fft(noisy_audio))))/N;
+
+            <span class="comment">% Find Fundamental Frequency</span>
+                [max_value_noisy_FT, max_index_noisy_FT] = max(noisy_audio_FT);
+                F_max = abs(frequency(max_index_noisy_FT)); <span class="comment">% Fundamental Frequency of Tuning Fork</span>
+
+            <span class="comment">% Create BPF with Kaiser Window LPF by multipying by e in time domain.</span>
+                [kaiser_LPF1, n1] = kaiserLPF(alphaH,Fs,Fc,F_max,M,N);
+                [kaiser_LPF2, n2] = kaiserLPF(alphaL,Fs,Fc,F_max,M,N);
+
+            <span class="comment">% Shited Kaiser IR to create a Bandpass filter.</span>
+                kaiser_BPF1 = real(kaiser_LPF1.*exp(j*2*pi*(F_max/Fs)*n1));
+                kaiser_BPF2 = real(kaiser_LPF2.*exp(j*2*pi*(F_max/Fs)*n2));
+
+            <span class="comment">% DFT of the Kaiser BPF</span>
+                kaiser_BPF1_FT = abs(fftshift(fft(kaiser_BPF1,N)));
+                kaiser_BPF2_FT = abs(fftshift(fft(kaiser_BPF2,N)));
+
+            <span class="comment">% All windows within kaiser_array will be applied to the audio signal</span>
+                kaiser_array = [kaiser_BPF1,kaiser_BPF2];
+            <span class="comment">% Pass kaiser array to my filter function</span>
+                filtered_audio = myFilter(kaiser_array, noisy_audio);
+            <span class="comment">% DFT of Clean Audio</span>
+                filtered_audio_FT = fftshift(abs(fft(filtered_audio)));
+</pre><img vspace="5" hspace="5" src="Audio_Filtering_02.png" alt=""> <img vspace="5" hspace="5" src="Audio_Filtering_03.png" alt=""> <h2 id="5">Final plots</h2><p>Overlaped Kaiser Windowed BPF's Time Domain</p><pre class="codeinput">                figure
+                hold <span class="string">on</span>
+                plot(n1, real(kaiser_BPF1),<span class="string">'b'</span>)
+                plot(n2, real(kaiser_BPF2),<span class="string">'r'</span>)
+                title(<span class="string">'Overlapped Kaiser Windows in Time Domain'</span>)
+                xlabel(<span class="string">'n'</span>); ylabel(<span class="string">'h(n)'</span>), legend
+                hold <span class="string">off</span>
+            <span class="comment">% Frequency Domain</span>
+                figure
+                hold <span class="string">on</span>
+                plot(frequency, mag2db(kaiser_BPF1_FT), <span class="string">'b'</span>)
+                plot(frequency, mag2db(kaiser_BPF2_FT), <span class="string">'r'</span>)
+                title(<span class="string">'Overlapped Kaiser BPF Windows'</span>)
+                xlabel(<span class="string">'f'</span>); ylabel(<span class="string">'H(f) (db)'</span>), legend
+                hold <span class="string">off</span>
+
+        <span class="comment">% Audio vs Filtered Audio</span>
+                figure
+                hold <span class="string">on</span>
+                subplot(2,1,1)
+                plot(frequency, mag2db(audio_FT),<span class="string">'b'</span>)
+                subplot(2,1,2)
+                plot(frequency, mag2db(filtered_audio_FT),<span class="string">'r'</span>)
+                title(<span class="string">'Audio and Filtered/Cleaned Audio'</span>)
+                xlabel(<span class="string">'n'</span>); ylabel(<span class="string">'H(f) (db)'</span>)
+                hold <span class="string">off</span>
+</pre><img vspace="5" hspace="5" src="Audio_Filtering_04.png" alt=""> <img vspace="5" hspace="5" src="Audio_Filtering_05.png" alt=""> <img vspace="5" hspace="5" src="Audio_Filtering_06.png" alt=""> <h2 id="6">Voice Pitch</h2><pre class="codeinput">        <span class="comment">%Create/Read the voice file</span>
+            myVoiceFile = <span class="string">'Audio Files/myVoiceFile.wav'</span>;
+            <span class="comment">%myVoiceFile = audioCapture(time,myVoiceFile,ID);</span>
+
+            <span class="comment">% Read Audio file</span>
+            myVoice = audioread(myVoiceFile);
+            info = audioinfo(myVoiceFile);
+</pre><h2 id="7">Audio Out files.</h2><pre class="codeinput">        time = N/Fs;
+        play = 0;
+
+            <span class="keyword">if</span> (play == 1)
+                disp(<span class="string">'Playing: Audio'</span>)
+                soundsc(audio, Fs);
+                pause(time);
+            <span class="keyword">end</span>
+
+        audiowrite(<span class="string">'Audio Files/Noisy_Audio.wav'</span>,noisy_audio,Fs)
+            <span class="keyword">if</span> (play == 1)
+                disp(<span class="string">'Playing: noisy_audio'</span>)
+                soundsc(noisy_audio, Fs);
+                pause(time);
+
+            <span class="keyword">end</span>
+
+        audiowrite(<span class="string">'Audio Files/Filtered_Audio.wav'</span>,filtered_audio,Fs)
+            <span class="keyword">if</span> (play == 1)
+                disp(<span class="string">'Playing: filtered_audio'</span>)
+                soundsc(filtered_audio, Fs);
+            <span class="keyword">end</span>
+</pre><pre class="codeoutput">Warning: Data clipped when writing file. 
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% This matlab script will capture a specified amount of audio (time) and
+% store that audio in a file within the Audio Files folder. If a file with
+% the specified filename already exists, it will prompt the user for
+% another filename. Next, this script will analyse the audio, plotting the
+% audio in the time and frequency domain. The script then adds
+% noise to the audio file, and filters that noise using two kaiser windowed 
+% low pass filters. Two filters are used so that two Kaiser windows of 
+% different shape can be applied to the filters, hence improving the 
+% quality of the filter. Next, the two kaiser windows are plotted, 
+% overlapped in the time and frequency domain, so that we may better 
+% visualize them. Additionally, plots of regular audio, and filtered audio
+% are plotted together.
+
+    %% Initialize Workspace
+        clc; clear; close all;
+            filename = 'Audio Files/tuning_fork.wav';
+
+        % Create Audio File
+            % Uncomment 'filename' if you need to record audio.
+            ID = -1; % Set the device (-1 is default audio device)
+            time = 3; % Sets the length of time the audioCapture will run.
+            %filename = audioCapture(time,filename,ID);
+
+        % Read Audio file
+            audio = audioread(filename);
+            info = audioinfo(filename);  
+
+        % Variable Declaration
+            M = 100; % Filter Order
+            alphaH = 7; % Alpha shape parameter of Kaiser window
+            alphaL = 0; % Alpha shape parameter of Kaiser window
+            Fc = 10; % Cut-off frequency for LPF
+
+         % Variable Calculations
+            N = info.TotalSamples; % Number of samples
+            Fs = info.SampleRate; % Sample Rate
+  
+    %% Analyze Audio
+
+        % Data preparation
+            % Create x-axis for frequency plots.
+                frequency=linspace(-Fs/2,Fs/2,N)'; 
+            % Take the DFT of the audio files, absolute value, and shift for symmetry
+                audio_FT = (fftshift(abs(fft(audio/max(audio)))))/N;
+            % Convert to decibles
+                audio_FT_db = mag2db(audio_FT);    
+
+        % Find the max value of the 
+            [max_value_FT, max_index_FT] = max(audio_FT);
+            fund_freq = abs(frequency(max_index_FT)); % Fundamental Frequency of Tuning Fork
+
+        % Audio DFT Magnitude Spectra plot
+            % Time domain plot
+                figure
+                subplot(3,1,1);
+                plot(frequency, audio_FT,'b');
+                xlabel('Frequency (Hz)'); ylabel('Y(n)');
+                title('Audio DFT Magnitude Spectra')
+            % Frequency Domain Plot
+                subplot(3,1,2);
+                plot(frequency, audio_FT,'b');
+                xlabel('Frequency (Hz)'); ylabel('Y(n)');
+                title('Audio DFT Magnitude Spectra')
+                text(fund_freq ,max_value_FT, sprintf('%f Hz', fund_freq))
+            % Frequency Domain plot in dB
+                subplot(3,1,3);
+                plot(frequency, audio_FT_db,'b');
+                xlabel('Frequency (Hz)'); ylabel('Amplitude (dB)');
+                title('Audio DFT Magnitude Spectra');
+
+            % From the above plot, we can see that our frequency is calculated as
+            % 415.8509 Hz. This is 0.4491 Hz away from the 415.3 Hz that is stamped
+            % on the tuning fork. We can express this as a percentage: 0.4491/415.3
+            % = 0.1081% away from the stamped frequency.
+          
+    %% Noisy Tuning Fork (BONUS)
+
+            %Adding Random Numbers to audio
+                noisy_audio = audio / max(audio) + randn(N,1);
+
+            % Take the DTFT of the audio files, absolute value, and shift for symmetry
+                noisy_audio_FT = (fftshift(abs(fft(noisy_audio))))/N;
+
+            % Find Fundamental Frequency 
+                [max_value_noisy_FT, max_index_noisy_FT] = max(noisy_audio_FT);
+                F_max = abs(frequency(max_index_noisy_FT)); % Fundamental Frequency of Tuning Fork
+
+            % Create BPF with Kaiser Window LPF by multipying by e in time domain.
+                [kaiser_LPF1, n1] = kaiserLPF(alphaH,Fs,Fc,F_max,M,N);
+                [kaiser_LPF2, n2] = kaiserLPF(alphaL,Fs,Fc,F_max,M,N);
+
+            % Shited Kaiser IR to create a Bandpass filter.
+                kaiser_BPF1 = real(kaiser_LPF1.*exp(j*2*pi*(F_max/Fs)*n1));
+                kaiser_BPF2 = real(kaiser_LPF2.*exp(j*2*pi*(F_max/Fs)*n2));
+
+            % DFT of the Kaiser BPF
+                kaiser_BPF1_FT = abs(fftshift(fft(kaiser_BPF1,N)));
+                kaiser_BPF2_FT = abs(fftshift(fft(kaiser_BPF2,N)));
+
+            % All windows within kaiser_array will be applied to the audio signal
+                kaiser_array = [kaiser_BPF1,kaiser_BPF2];
+            % Pass kaiser array to my filter function
+                filtered_audio = myFilter(kaiser_array, noisy_audio);
+            % DFT of Clean Audio
+                filtered_audio_FT = fftshift(abs(fft(filtered_audio)));
+                   
+    %% Final plots    
+        % Overlaped Kaiser Windowed BPF's
+            % Time Domain
+                figure
+                hold on
+                plot(n1, real(kaiser_BPF1),'b')
+                plot(n2, real(kaiser_BPF2),'r')
+                title('Overlapped Kaiser Windows in Time Domain')
+                xlabel('n'); ylabel('h(n)'), legend
+                hold off
+            % Frequency Domain
+                figure
+                hold on 
+                plot(frequency, mag2db(kaiser_BPF1_FT), 'b')
+                plot(frequency, mag2db(kaiser_BPF2_FT), 'r')
+                title('Overlapped Kaiser BPF Windows')
+                xlabel('f'); ylabel('H(f) (db)'), legend
+                hold off
+
+        % Audio vs Filtered Audio
+                figure
+                hold on
+                subplot(2,1,1)
+                plot(frequency, mag2db(audio_FT),'b')
+                subplot(2,1,2)
+                plot(frequency, mag2db(filtered_audio_FT),'r')
+                title('Audio and Filtered/Cleaned Audio')
+                xlabel('n'); ylabel('H(f) (db)')
+                hold off    
+           
+                
+    %% Voice Pitch
+        %Create/Read the voice file
+            myVoiceFile = 'Audio Files/myVoiceFile.wav';
+            %myVoiceFile = audioCapture(time,myVoiceFile,ID);
+
+            % Read Audio file
+            myVoice = audioread(myVoiceFile);
+            info = audioinfo(myVoiceFile); 
+
+    %% Audio Out files.
+        time = N/Fs; 
+        play = 0;
+        
+            if (play == 1)
+                disp('Playing: Audio')
+                soundsc(audio, Fs);
+                pause(time);
+            end
+   
+        audiowrite('Audio Files/Noisy_Audio.wav',noisy_audio,Fs)
+            if (play == 1)
+                disp('Playing: noisy_audio')
+                soundsc(noisy_audio, Fs);
+                pause(time);
+
+            end
+        
+        audiowrite('Audio Files/Filtered_Audio.wav',filtered_audio,Fs)
+            if (play == 1)
+                disp('Playing: filtered_audio')
+                soundsc(filtered_audio, Fs);
+            end
+
+        
+
+##### SOURCE END #####
+--></body></html>

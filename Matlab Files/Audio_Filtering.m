@@ -26,9 +26,9 @@
             info = audioinfo(filename);  
 
         % Variable Declaration
-            M = 2000; % Filter Order
+            M = 100; % Filter Order
             alphaH = 7; % Alpha shape parameter of Kaiser window
-            alphaL = 0.5; % Alpha shape parameter of Kaiser window
+            alphaL = 0.25; % Alpha shape parameter of Kaiser window
             Fc = 10; % Cut-off frequency for LPF
 
          % Variable Calculations
@@ -53,9 +53,9 @@
             % Time domain plot
                 figure
                 subplot(3,1,1);
-                plot(frequency, audio_FT,'b');
+                plot(frequency, audio,'b');
                 xlabel('Frequency (Hz)'); ylabel('Y(n)');
-                title('Audio DFT Magnitude Spectra')
+                title('Audio in time Domain')
             % Frequency Domain Plot
                 subplot(3,1,2);
                 plot(frequency, audio_FT,'b');
@@ -77,7 +77,7 @@
 
             %Adding Random Numbers to audio
                 noisy_audio = audio / max(audio) + randn(N,1);
-
+    
             % Take the DTFT of the audio files, absolute value, and shift for symmetry
                 noisy_audio_FT = (fftshift(abs(fft(noisy_audio))))/N;
 
@@ -122,32 +122,49 @@
                 title('Overlapped Kaiser BPF Windows')
                 xlabel('f'); ylabel('H(f) (db)'), legend
                 hold off
-
         % Audio vs Filtered Audio
                 figure
                 hold on
                 subplot(2,1,1)
                 plot(frequency, mag2db(audio_FT),'b')
+                title('Audio')
                 subplot(2,1,2)
                 plot(frequency, mag2db(filtered_audio_FT),'r')
-                title('Audio and Filtered/Cleaned Audio')
+                title('Filtered/Cleaned Audio')
                 xlabel('n'); ylabel('H(f) (db)')
                 hold off    
-                
+                     
+    %% Voice Pitch
+        %Create/Read the voice file
+            myVoiceFile = 'Audio Files/myVoiceFile.wav';
+            %myVoiceFile = audioCapture(time,myVoiceFile,ID);
+
+            % Read Audio file
+            myVoice = audioread(myVoiceFile);
+            info = audioinfo(myVoiceFile); 
+
     %% Audio Out files.
-        time = N/Fs;
-        disp('Playing: Audio')
-        % Uncomment if you would like to hear the audio
-        soundsc(audio, Fs); 
-        pause(time);
+        time = N/Fs; 
+        play = 1;
+        
+            if (play == 1)
+                disp('Playing: Audio')
+                soundsc(audio, Fs);
+                pause(time);
+            end
    
         audiowrite('Audio Files/Noisy_Audio.wav',noisy_audio,Fs)
-        disp('Playing: noisy_audio')
-        % Uncomment if you would like to hear the audio
-        soundsc(noisy_audio, Fs);
-        pause(time);
-       
+            if (play == 1)
+                disp('Playing: noisy_audio')
+                soundsc(noisy_audio, Fs);
+                pause(time);
+
+            end
+        
         audiowrite('Audio Files/Filtered_Audio.wav',filtered_audio,Fs)
-        disp('Playing: filtered_audio')
-        % Uncomment if you would like to hear the audio
-        soundsc(filtered_audio, Fs);
+            if (play == 1)
+                disp('Playing: filtered_audio')
+                soundsc(filtered_audio, Fs);
+            end
+
+        
